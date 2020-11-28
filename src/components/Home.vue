@@ -13,19 +13,85 @@
     <!-- 页面主体 -->
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside width="200px">Aside</el-aside>
+      <el-aside :width="isCollapse ? '64px':'200px'">
+        <!-- 伸缩侧边栏按钮 -->
+        <div class="toggle-button"
+             @click="toggleCollapse">|||</div>
+        <!-- 侧边栏菜单，:collapse="isCollapse"（设置折叠菜单为绑定的 isCollapse 值），:collapse-transition="false"（关闭默认的折叠动画） -->
+        <el-menu background-color="#333744"
+                 text-color="#fff"
+                 active-text-color="#379aff"
+                 unique-opened
+                 :collapse="isCollapse"
+                 :collapse-transition="false"
+                 :router="true">
+          <!-- 一级菜单 -->
+          <el-submenu :index="time.id + ''"
+                      v-for="time in  menulist"
+                      :key="time.id">
+            <!-- 一级菜单模板 -->
+            <template slot="title">
+              <!-- 图标 -->
+              <i :class="iconsObj[time.id]"></i>
+              <!-- 文本 -->
+              <span>{{time.authName}}</span>
+            </template>
+            <!-- 二级子菜单 -->
+            <el-menu-item :index=" '/' + time1.path "
+                          v-for="time1 in  time.children"
+                          :key="time1.id">
+              <!-- 二级菜单模板 -->
+              <template slot="title">
+                <!-- 图标 -->
+                <i class="el-icon-menu"></i>
+                <!-- 文本 -->
+                <span>{{time1.authName}}</span>
+              </template>
+            </el-menu-item>
+          </el-submenu>
+        </el-menu>
+      </el-aside>
       <!-- 右侧主体 -->
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      menulist: [],
+      iconsObj: {
+        125: 'iconfont icon-user',
+        103: 'iconfont icon-tijikongjian',
+        101: 'iconfont icon-shangpin',
+        102: 'iconfont icon-danju',
+        145: 'iconfont icon-baobiao',
+      },
+      isCollapse: false,
+    }
+  },
+
+  created() {
+    this.getMenuList()
+  },
   methods: {
     logout() {
       window.sessionStorage.clear()
       this.$router.push('/login')
+    },
+    // 获取所有的菜单
+    async getMenuList() {
+      const { data: res } = await this.$http.get('menus')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.menulist = res.data
+      console.log(res)
+    },
+    toggleCollapse() {
+      this.isCollapse = !this.isCollapse
     },
   },
 }
@@ -53,8 +119,24 @@ export default {
 }
 .el-aside {
   background-color: #333744;
+  .el-menu {
+    border-right: none;
+  }
 }
 .el-main {
   background-color: #eaedf1;
+}
+.iconfont {
+  margin-right: 10px;
+}
+
+.toggle-button {
+  background-color: #4a5064;
+  font-size: 10px;
+  line-height: 24px;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.2em;
+  cursor: pointer;
 }
 </style>

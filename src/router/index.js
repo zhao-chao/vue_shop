@@ -5,20 +5,27 @@ import Login from '../components/Login.vue'
 
 import Home from '../components/Home.vue'
 
-Vue.use(VueRouter)
+import Welcome from '../components/Welcome.vue'
 
-const routes = []
+Vue.use(VueRouter)
 
 const router = new VueRouter({
 	routes: [
 		{ path: '/', redirect: '/login' },
-		{ path: '/login', component: Login },
-		{ path: '/home', component: Home },
+		{ path: '/login', component: Login, name: '登录' },
+		{
+			name: '主页',
+			path: '/home',
+			component: Home,
+			redirect: '/welcome',
+			children: [{ name: '欢迎', path: '/welcome', component: Welcome }],
+		},
 	],
 })
 
 // 挂载路由导航守卫，to 表示将要访问的路径，from 表示从哪里来，next 是下一个要做的操作
 router.beforeEach((to, from, next) => {
+	document.title = to.name
 	// 直接放行
 	if (to.path === '/login') return next()
 	// 获取 token

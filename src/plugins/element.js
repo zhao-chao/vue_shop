@@ -15,6 +15,9 @@ import {
 	Header,
 	Aside,
 	Main,
+	Menu,
+	Submenu,
+	MenuItem,
 } from 'element-ui'
 
 Vue.use(Button)
@@ -27,5 +30,11 @@ Vue.use(Container)
 Vue.use(Header)
 Vue.use(Aside)
 Vue.use(Main)
+
+// 左侧列表
+Vue.use(Menu)
+Vue.use(Submenu)
+
+Vue.use(MenuItem)
 // 弹出框组件 需要全局挂载
 Vue.prototype.$message = Message
