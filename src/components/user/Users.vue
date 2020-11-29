@@ -12,9 +12,13 @@
       <!-- 搜索与添加区域 -->
       <el-row :gutter="20">
         <el-col :span="7">
-          <el-input placeholder="请输入内容">
+          <el-input placeholder="请输入内容"
+                    v-model="queryInfo.query"
+                    clearable
+                    @clear="getUserList">
             <el-button slot="append"
-                       icon="el-icon-search"></el-button>
+                       icon="el-icon-search"
+                       @click="getUserList"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
@@ -26,7 +30,8 @@
       <el-table :data="userList"
                 border
                 stripe>
-        <el-table-column type="index"></el-table-column>
+        <el-table-column type="index"
+                         label="#"></el-table-column>
         <el-table-column label="姓名"
                          prop="username"></el-table-column>
         <el-table-column label="邮箱"
@@ -37,7 +42,8 @@
                          prop="role_name"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.mg_state"></el-switch>
+            <el-switch v-model="scope.row.mg_state"
+                       @change="userStateChanged(scope.row)"></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作"
@@ -67,11 +73,11 @@
       </el-table>
 
       <!-- 分页导航区域
-@size-change(pagesize改变时触发)
-@current-change(页码发生改变时触发)
-:current-page(设置当前页码)
-:page-size(设置每页的数据条数)
-:total(设置总页数) -->
+        @size-change(pagesize改变时触发)
+        @current-change(页码发生改变时触发)
+        :current-page(设置当前页码)
+        :page-size(设置每页的数据条数)
+        :total(设置总页数) -->
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
                      :current-page="queryInfo.pagenum"
@@ -116,6 +122,26 @@ export default {
       //如果返回状态正常，将请求的数据保存在data中
       this.userList = res.data.users
       this.total = res.data.total
+    },
+    handleSizeChange(a) {
+      this.queryInfo.pagesize = a
+      this.getUserList()
+    },
+    handleCurrentChange(a) {
+      this.queryInfo.pagenum = a
+      this.getUserList()
+    },
+    async userStateChanged(row) {
+      //发送请求进行状态修改
+      const { data: res } = await this.$http.put(
+        `users/${row.id}/state/${row.mg_state}`
+      )
+      //如果返回状态为异常状态则报错并返回
+      if (res.meta.status !== 200) {
+        row.mg_state = !row.mg_state
+        return this.$message.error('修改状态失败')
+      }
+      this.$message.success('更新状态成功')
     },
   },
 }
