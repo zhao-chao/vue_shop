@@ -28,6 +28,7 @@ import {
 	Switch,
 	Tooltip,
 	Pagination,
+	Dialog,
 } from 'element-ui'
 
 Vue.use(Button)
@@ -63,5 +64,8 @@ Vue.use(Tooltip)
 // 分页
 
 Vue.use(Pagination)
+// 对话框
+Vue.use(Dialog)
+
 // 弹出框组件 需要全局挂载
 Vue.prototype.$message = Message
