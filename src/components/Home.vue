@@ -24,7 +24,8 @@
                  unique-opened
                  :collapse="isCollapse"
                  :collapse-transition="false"
-                 :router="true">
+                 :router="true"
+                 :default-active="activePath">
           <!-- 一级菜单 -->
           <el-submenu :index="time.id + ''"
                       v-for="time in  menulist"
@@ -39,7 +40,8 @@
             <!-- 二级子菜单 -->
             <el-menu-item :index=" '/' + time1.path "
                           v-for="time1 in  time.children"
-                          :key="time1.id">
+                          :key="time1.id"
+                          @click="saveNavState('/' + time1.path)">
               <!-- 二级菜单模板 -->
               <template slot="title">
                 <!-- 图标 -->
@@ -72,11 +74,14 @@ export default {
         145: 'iconfont icon-baobiao',
       },
       isCollapse: false,
+
+      activePath: '',
     }
   },
 
   created() {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
     logout() {
@@ -92,6 +97,11 @@ export default {
     },
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+
+    saveNavState(activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     },
   },
 }

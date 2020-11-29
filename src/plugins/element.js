@@ -18,6 +18,16 @@ import {
 	Menu,
 	Submenu,
 	MenuItem,
+	Breadcrumb,
+	BreadcrumbItem,
+	Card,
+	Row,
+	Col,
+	Table,
+	TableColumn,
+	Switch,
+	Tooltip,
+	Pagination,
 } from 'element-ui'
 
 Vue.use(Button)
@@ -34,7 +44,24 @@ Vue.use(Main)
 // 左侧列表
 Vue.use(Menu)
 Vue.use(Submenu)
-
 Vue.use(MenuItem)
+
+// 面包屑
+Vue.use(Breadcrumb)
+Vue.use(BreadcrumbItem)
+Vue.use(Card)
+
+// 栅格系统
+Vue.use(Row)
+Vue.use(Col)
+
+// 表格
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Switch)
+Vue.use(Tooltip)
+// 分页
+
+Vue.use(Pagination)
 // 弹出框组件 需要全局挂载
 Vue.prototype.$message = Message
