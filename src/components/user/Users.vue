@@ -59,7 +59,8 @@
             <!-- 删除 -->
             <el-button type="danger"
                        icon="el-icon-delete"
-                       size="mini"></el-button>
+                       size="mini"
+                       @click="removeUserById(scope.row.id)"></el-button>
             <!-- 分配角色 -->
             <el-tooltip class="item"
                         effect="dark"
@@ -354,9 +355,8 @@ export default {
       //显示弹出窗
       this.editDialogVisible = true
     },
-
+    //对话框关闭之后，重置表达
     editDialogClosed() {
-      //对话框关闭之后，重置表达
       this.$refs.editFormRef.resetFields()
     },
     // 修改用户信息
@@ -378,6 +378,32 @@ export default {
         //重新请求最新的数据
         this.getUserList()
       })
+    },
+    // 删除用户
+    async removeUserById(id) {
+      //弹出确定取消框，是否删除用户
+      const confirmResult = await this.$confirm(
+        '请问是否要永久删除该用户',
+        '删除提示',
+        {
+          confirmButtonText: '确认删除',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).catch((err) => err)
+      //如果用户点击确认，则confirmResult 为'confirm'
+      //如果用户点击取消, 则confirmResult获取的就是catch的错误消息'cancel'
+      if (confirmResult != 'confirm') {
+        return this.$message.info('已经取消删除')
+      }
+      //发送请求根据id完成删除操作
+      const { data: res } = await this.$http.delete('users/' + id)
+      //判断如果删除失败，就做提示
+      if (res.meta.status !== 200) return this.$message.error('删除用户失败')
+      //修改成功的提示
+      this.$message.success('删除用户成功')
+      //重新请求最新的数据
+      this.getUserList()
     },
   },
 }
