@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>用户列表组件</h3>
+
     <!-- 面包屑导航 -->
     <el-breadcrumb separator=">">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>

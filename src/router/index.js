@@ -9,6 +9,9 @@ import Welcome from '../components/Welcome.vue'
 
 import Users from '../components/user/Users.vue'
 
+import Rights from '../components/power/Rights.vue'
+
+import Roles from '../components/power/Roles.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -22,7 +25,9 @@ const router = new VueRouter({
 			redirect: '/welcome',
 			children: [
 				{ name: '欢迎', path: '/welcome', component: Welcome },
-				{ path: '/users', component: Users },
+				{ path: '/users', component: Users, name: '欢迎欢迎' },
+				{ path: '/rights', component: Rights, name: '权限列表' },
+				{ path: '/roles', component: Roles, name: ' 角色列表' },
 			],
 		},
 	],
