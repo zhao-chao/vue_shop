@@ -31,6 +31,7 @@ import {
 	Dialog,
 	MessageBox,
 	Tag,
+	Tree,
 } from 'element-ui'
 
 Vue.use(Button)
@@ -69,6 +70,7 @@ Vue.use(Pagination)
 // 对话框
 Vue.use(Dialog)
 Vue.use(Tag)
+Vue.use(Tree)
 
 // 弹出框组件 需要全局挂载
 Vue.prototype.$message = Message

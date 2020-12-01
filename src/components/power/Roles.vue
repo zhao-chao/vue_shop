@@ -85,12 +85,34 @@ if there's nested data, rowKey is required.
                        icon="el-icon-delete">删除</el-button>
             <el-button size="mini"
                        type="warning"
-                       icon="el-icon-setting">分配权限</el-button>
+                       icon="el-icon-setting"
+                       @click="showSetRightDialog(scope.row)">分配权限</el-button>
           </template>
         </el-table-column>
       </el-table>
 
     </el-card>
+
+    <!-- 分配权限 -->
+
+    <el-dialog title="分配权限"
+               :visible.sync="setRightDialogVisible"
+               width="50%"
+               @close="a">
+      <el-tree :data="rightslist"
+               :props="treeProps"
+               show-checkbox
+               node-key="id"
+               default-expand-all
+               :default-checked-keys="defKeys"
+               ref="treeRef"></el-tree>
+      <span slot="footer"
+            class="dialog-footer">
+        <el-button @click="setRightDialogVisible= false">取 消</el-button>
+        <el-button type="primary"
+                   @click="allotRights">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -98,7 +120,19 @@ if there's nested data, rowKey is required.
 export default {
   data() {
     return {
+      //所有角色列表数据
       roleList: [],
+      //   控制分配权限对话框的显示与影藏
+      setRightDialogVisible: false,
+      //   所有权限的数据
+      rightslist: [],
+      treeProps: {
+        label: 'authName',
+        children: 'children',
+      },
+
+      defKeys: [],
+      roleId: '',
     }
   },
   created() {
@@ -112,9 +146,10 @@ export default {
       //     return this.$message.error('获取角色列表失败')
       // //如果返回状态正常，将请求的数据保存在data中
       // this.roleList = res.data
-      console.log(res.data)
+
       this.roleList = res.data
     },
+    // 删除权限
     async removeRightById(role, rightId) {
       //弹窗提示用户是否要删除
       const confirmResult = await this.$confirm(
@@ -143,6 +178,54 @@ export default {
       //只需要对现有的角色权限进行更新即可
       role.children = res.data
       // this.getRoleList();
+    },
+    // 分配权限
+    async showSetRightDialog(role) {
+      const { data: res } = await this.$http.get('rights/tree')
+
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取权限数据失败')
+      }
+      this.rightslist = res.data
+      this.getLeafKeys(role, this.defKeys)
+      this.setRightDialogVisible = true
+
+      this.roleId = role.id
+    },
+
+    getLeafKeys(node, arr) {
+      if (!node.children) {
+        return arr.push(node.id)
+      }
+      node.children.forEach((item) => this.getLeafKeys(item, arr))
+    },
+    a() {
+      this.defKeys = []
+    },
+    //当用户在树形权限对话框中点击确定，将用户选择的
+    //权限发送请求进行更新
+    async allotRights() {
+      //获取所有选中及半选的内容
+      const keys = [
+        ...this.$refs.treeRef.getCheckedKeys(),
+        ...this.$refs.treeRef.getHalfCheckedKeys(),
+      ]
+      //将数组转换为 , 拼接的字符串
+      const idStr = keys.join(',')
+
+      //发送请求完成更新
+      const { data: res } = await this.$http.post(
+        `roles/${this.roleId}/rights`,
+        {
+          rids: idStr,
+        }
+      )
+      if (res.meta.status !== 200) return this.$message.error('分配权限失败')
+
+      this.$message.success('分配权限成功')
+      this.getRoleList()
+      //关闭对话框
+      this.setRightDialogVisible = false
     },
   },
 }
