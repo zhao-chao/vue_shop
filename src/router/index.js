@@ -17,6 +17,10 @@ import Cate from '../components/goods/Cate.vue'
 
 import Params from '../components/goods/Params.vue'
 
+import List from '../components/goods/List.vue'
+
+import Add from '../components/goods/Add.vue'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -35,6 +39,8 @@ const router = new VueRouter({
 				{ path: '/roles', component: Roles, name: ' 角色列表' },
 				{ path: '/categories', component: Cate, name: ' 商品分类' },
 				{ path: '/params', component: Params, name: ' 分类参数' },
+				{ path: '/goods', component: List, name: ' 商品列表' },
+				{ path: '/goods/add', component: Add, name: ' 分类参数' },
 			],
 		},
 	],
