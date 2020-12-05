@@ -123,8 +123,16 @@
             </el-upload>
 
           </el-tab-pane>
+          <!-- 富文本编辑器组件 -->
           <el-tab-pane label="商品内容"
-                       name="4"> </el-tab-pane>
+                       name="4">
+            <!-- 富文本编辑器组件 -->
+            <quill-editor v-model="addForm.goods_introduce"></quill-editor>
+            <!-- 添加商品按钮 -->
+            <el-button type="primary"
+                       class="btnAdd"
+                       @click="add">添加商品</el-button>
+          </el-tab-pane>
         </el-tabs>
       </el-form>
     </el-card>
@@ -142,6 +150,8 @@
 
 
 <script>
+import _ from 'lodash'
+
 export default {
   data() {
     return {
@@ -156,6 +166,8 @@ export default {
         goods_cat: [],
         //上传图片数组
         pics: [],
+        goods_introduce: '',
+        attrs: [],
       },
       //验证规则
       addFormRules: {
@@ -284,6 +296,38 @@ export default {
       //形参response就是上传成功之后服务器返回的结果
       //将服务器返回的临时路径保存到addForm表单的pics数组中
       this.addForm.pics.push({ pic: response.data.tmp_path })
+    },
+    //编写点击事件完成商品添加
+    add() {
+      this.$refs.addFormRef.validate(async (valid) => {
+        if (!valid) return this.$message.error('请填写必要的表单项!')
+
+        //将addForm进行深拷贝，避免goods_cat数组转换字符串之后导致级联选择器报错
+        const form = _.cloneDeep(this.addForm)
+        //将goods_cat从数组转换为"1,2,3"字符串形式
+        form.goods_cat = form.goods_cat.join(',')
+        //处理attrs数组，数组中需要包含商品的动态参数和静态属性
+        //将manyTableData（动态参数）处理添加到attrs
+        this.manyTableData.forEach((item) => {
+          form.attrs.push({
+            attr_id: item.attr_id,
+            attr_value: item.attr_vals.join(' '),
+          })
+        })
+        //将onlyTableData（静态属性）处理添加到attrs
+        this.onlyTableData.forEach((item) => {
+          form.attrs.push({ attr_id: item.attr_id, attr_value: item.attr_vals })
+        })
+
+        //发送请求完成商品的添加,商品名称必须是唯一的
+        const { data: res } = await this.$http.post('goods', form)
+        if (res.meta.status !== 201) {
+          return this.$message.error('添加商品失败')
+        }
+        this.$message.success('添加商品成功')
+        //编程式导航跳转到商品列表
+        this.$router.push('/goods')
+      })
     },
   },
 
