@@ -43,6 +43,8 @@ import {
 	Checkbox,
 	CheckboxGroup,
 	Upload,
+	Timeline,
+	TimelineItem,
 } from 'element-ui'
 
 Vue.use(Button)
@@ -94,6 +96,8 @@ Vue.use(Checkbox)
 Vue.use(CheckboxGroup)
 
 Vue.use(Upload)
+Vue.use(Timeline)
+Vue.use(TimelineItem)
 
 // 弹出框组件 需要全局挂载
 Vue.prototype.$message = Message
