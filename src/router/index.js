@@ -23,6 +23,8 @@ import Add from '../components/goods/Add.vue'
 
 import Order from '../components/order/Order.vue'
 
+import Report from '../components/report/Report.vue'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -44,6 +46,7 @@ const router = new VueRouter({
 				{ path: '/goods', component: List, name: ' 商品列表' },
 				{ path: '/goods/add', component: Add, name: ' 分类参数' },
 				{ path: '/orders', component: Order, name: ' 订单列表' },
+				{ path: '/reports', component: Report, name: ' 数据分析' },
 			],
 		},
 	],
