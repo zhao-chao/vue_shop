@@ -21,15 +21,30 @@ import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
 
+//导入进度条插件
+import NProgress from 'nprogress'
+//导入进度条样式
+import 'nprogress/nprogress.css'
+
 // src/main.js
 import axios from 'axios'
 // 设置请求的根路径
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 // 添加拦截器 让登录后的请求带上 令牌  让
 
-//axios设置请求拦截器
+//请求在到达服务器之前，先会调用use中的这个回调函数来添加请求头信息
 axios.interceptors.request.use((config) => {
-	config.headers.Authorization = window.sessionStorage.getItem('token') //设置响应头
+	//当进入request拦截器，表示发送了请求，我们就开启进度条
+	NProgress.start()
+	//为请求头对象，添加token验证的Authorization字段
+	config.headers.Authorization = window.sessionStorage.getItem('token')
+	//必须返回config
+	return config
+})
+//在response拦截器中，隐藏进度条
+axios.interceptors.response.use((config) => {
+	//当进入response拦截器，表示请求已经结束，我们就结束进度条
+	NProgress.done()
 	return config
 })
 Vue.prototype.$http = axios

@@ -22,7 +22,8 @@ if there's nested data, rowKey is required.
 如果这是一个嵌套的数据，rowkey 是必须添加的属性 -->
       <el-table :data="roleList"
                 border
-                stripe>
+                stripe
+                row-key="id">
         <!-- 添加展开列 -->
         <el-table-column type="expand">
 
